@@ -1,6 +1,7 @@
 import React, { Fragment, useState } from "react";
 import { styled, themes, convert } from "@storybook/theming";
 import { Icons, IconsProps } from "@storybook/components";
+import { Branch } from "./types";
 
 const ListWrapper = styled.ul({
   listStyle: "none",
@@ -49,47 +50,23 @@ const Description = styled.div({
   padding: convert(themes.normal).layoutMargin,
   marginBottom: convert(themes.normal).layoutMargin,
   fontStyle: "italic",
+  cursor: "pointer",
+  "&:hover": {
+    background: convert(themes.normal).background.hoverable,
+  },
 });
 
-type Item = {
-  title: string;
-  description: string;
-};
-
-interface ListItemProps {
-  item: Item;
-}
-
-export const ListItem: React.FC<ListItemProps> = ({ item }) => {
-  const [open, onToggle] = useState(false);
-
-  return (
-    <Fragment>
-      <Wrapper>
-        <HeaderBar onClick={() => onToggle(!open)} role="button">
-          <Icon
-            icon="chevrondown"
-            color={convert(themes.normal).appBorderColor}
-            style={{
-              transform: `rotate(${open ? 0 : -90}deg)`,
-            }}
-          />
-          {item.title}
-        </HeaderBar>
-      </Wrapper>
-      {open ? <Description>{item.description}</Description> : null}
-    </Fragment>
-  );
-};
-
 interface ListProps {
-  items: Item[];
+  branches: Branch[];
+  onClick: (x: string) => void;
 }
 
-export const List: React.FC<ListProps> = ({ items }) => (
+export const List: React.FC<ListProps> = ({ onClick, branches }) => (
   <ListWrapper>
-    {items.map((item, idx) => (
-      <ListItem key={idx} item={item}></ListItem>
+    {branches.map((branch, idx) => (
+      <Description onClick={() => onClick(branch.name)} key={idx}>
+        {branch.checkedOut ? <strong>{branch.name}</strong> : branch.name}
+      </Description>
     ))}
   </ListWrapper>
 );
